@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Поспелла — Статусы заказа</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F7529E;
+  --bg:#F7F7FB;--card:#fff;--border:#E4E4EF;
+  --ph1:#2563EB;--ph1b:#EFF6FF;
+  --ph2:#CA8A04;--ph2b:#FEFCE8;
+  --ph3:#7C3AED;--ph3b:#F5F3FF;
+  --ph4:#C2410C;--ph4b:#FFF7ED;
+  --ph5:#0284C7;--ph5b:#F0F9FF;
+  --ph6:#16A34A;--ph6b:#F0FDF4;
+}
+html,body{font-family:'Nunito',sans-serif;background:var(--bg);color:#1a1a2e}
+
+header{
+  background:var(--brand);color:#fff;height:44px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;box-shadow:0 2px 14px rgba(247,82,158,.4);
+  position:sticky;top:0;z-index:200;
+}
+.logo{font-size:15px;font-weight:900}
+.tabs{display:flex;gap:4px}
+.tab{padding:4px 14px;border-radius:999px;font-family:inherit;font-size:11.5px;font-weight:800;
+  cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:transparent;
+  color:rgba(255,255,255,.9);transition:all .15s}
+.tab.on,.tab:hover{background:#fff;color:var(--brand);border-color:#fff}
+
+.page{display:none;padding:10px 14px 14px;max-width:980px;margin:0 auto}
+.page.on{display:block}
+
+/* ── Flow: each row = one phase ─────── */
+.flow{display:flex;flex-direction:column;gap:0}
+
+.ph-row{display:flex;align-items:stretch;gap:0;margin:0}
+.ph-lbl{
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  font-size:8.5px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;
+  padding:5px 3px;border-radius:6px 0 0 6px;min-width:20px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;white-space:nowrap;
+}
+.ph-nodes{display:flex;align-items:center;gap:0;flex:1;flex-wrap:nowrap;padding:4px 0 4px 6px;overflow:visible}
+
+/* ── Card ─────────────────────────── */
+.nd{display:flex;align-items:center}
+.card{
+  background:var(--card);border:1.5px solid var(--border);border-radius:8px;
+  padding:5px 8px;min-width:105px;max-width:135px;
+  cursor:pointer;transition:border-color .15s,box-shadow .15s;
+  position:relative;
+}
+.card:hover{border-color:var(--brand);box-shadow:0 2px 12px rgba(247,82,158,.18)}
+.card.on{border-color:var(--brand);background:#FFF5FA;z-index:10}
+.sn{font-size:8px;font-weight:900;opacity:.4;margin-bottom:1px}
+.st{font-size:11px;font-weight:900;line-height:1.2;margin-bottom:3px}
+.mt{display:flex;flex-wrap:wrap;gap:2px}
+.ch{font-size:8.5px;font-weight:800;padding:1.5px 5px;border-radius:4px;white-space:nowrap;line-height:1.4}
+.ch-m{background:#FFE4F1;color:var(--brand)}
+.ch-a{background:#FEF3C7;color:#92400E}
+.ch-l{background:#E0F2FE;color:#0369A1}
+.ch-t{background:#F4F4F5;color:#52525B}
+.ch-t.w{background:#FEF9C3;color:#A16207}
+
+/* arrow between nodes */
+.arr{font-size:11px;color:#CCC;padding:0 3px;flex-shrink:0}
+
+/* gap between phases */
+.gap{height:14px;display:flex;align-items:center;padding-left:26px}
+.gap::after{content:'↓';color:rgba(247,82,158,.45);font-size:12px}
+
+/* ── Popup tooltip ─────────────────── */
+.pop{
+  display:none;position:absolute;z-index:300;
+  top:calc(100% + 5px);left:0;
+  background:#fff;border:1.5px solid var(--brand);border-radius:8px;
+  padding:9px 11px;width:270px;
+  font-size:10.5px;line-height:1.75;color:#333;white-space:pre-wrap;
+  box-shadow:0 6px 24px rgba(247,82,158,.2);
+}
+.card.on .pop{display:block}
+.pw{background:#FFF8E1;border:1px solid #FFE082;border-radius:4px;
+  padding:4px 7px;font-size:10px;font-weight:800;color:#7B5800;
+  display:inline-block;margin-top:5px}
+
+/* branch block */
+.branch{
+  border:1.5px solid #BAE6FD;border-radius:8px;background:#F0F9FF;
+  padding:5px 8px;min-width:170px;max-width:210px;
+}
+.bt{font-size:8.5px;font-weight:900;color:var(--ph5);text-align:center;margin-bottom:3px}
+.bi{display:flex;gap:3px;font-size:9.5px;font-weight:700;color:#333;line-height:1.4;margin-bottom:2px}
+.bi:last-child{margin-bottom:0}
+
+/* exceptions */
+.exc-bar{display:flex;gap:7px;margin-top:10px;padding-top:9px;border-top:2px dashed var(--border);align-items:stretch}
+.exc-lbl{font-size:8.5px;font-weight:900;color:#AAA;text-transform:uppercase;letter-spacing:1px;
+  writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;flex-shrink:0}
+.ec{background:var(--card);border:1.5px solid var(--border);border-radius:8px;
+  padding:5px 9px;cursor:pointer;flex:1;position:relative;transition:border-color .15s}
+.ec:hover{border-color:#999}
+.ec.on{border-color:#999;background:#FAFAFA;z-index:10}
+.ec .pop{border-color:#999;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.es{font-size:11px;font-weight:900;color:#888}
+.eh{font-size:9.5px;color:#BBB;margin-top:1px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🌿 Поспелла · Статусы заказа</div>
+  <div class="tabs">
+    <button class="tab on" onclick="sw('g',this)">📦 Склад Готово</button>
+    <button class="tab" onclick="sw('t',this)">🏭 Тех. склад</button>
+  </div>
+</header>
+
+
+<!-- ══ СКЛАД ГОТОВО ══ -->
+<div id="p-g" class="page on"><div class="flow">
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph1b);color:var(--ph1)">Прием</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 1</div><div class="st" style="color:var(--ph1)">Новый</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 р.дня</span></div>
+        <div class="pop">Проверяем наличие товаров по «Мой склад».
+Для товаров на складах «Готово» — отправляем фото из еженедельной подборки клиенту.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 2</div><div class="st" style="color:var(--ph1)">Согласование</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">1 нед</span></div>
+        <div class="pop">Получаем ОС по фото, корректируем заказ.
+Выставляем счёт.
+Клиент первичный → реквизиты + договор.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph2b);color:var(--ph2)">Оплата</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 3</div><div class="st" style="color:var(--ph2)">Счёт выставлен</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">1+1 нед</span></div>
+        <div class="pop">Бронь — только после предоплаты.
+Нет оплаты через неделю → перезвонить.
+Первичный клиент → проверить возврат договора.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 4</div><div class="st" style="color:var(--ph2)">Предоплата получена</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 р.дня</span></div>
+        <div class="pop">ОБЯЗАТЕЛЬНО в заказе:
+  1. Галочка «Резерв»
+  2. Склад отгрузки
+  3. Планируемая дата отгрузки</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph4b);color:var(--ph4)">Сборка</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 5</div><div class="st" style="color:var(--ph4)">На сборку</div>
+        <div class="mt"><span class="ch ch-a">Пом. агронома</span><span class="ch ch-t w">3 р.дня</span></div>
+        <div class="pop">Отгрузка через ≤ 2 нед → откладывается на площадку «Заказы».
+
+Ежедневный отчёт: «Заказы покупателей» → статус «На сборку» + дата ±2 нед.
+После сборки → фотоотчёт менеджеру.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 6</div><div class="st" style="color:var(--ph4)">Заказ собран</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 р.дня</span></div>
+        <div class="pop">✉ Сообщить клиенту + фото.
+💰 Напомнить о доплате.
+📅 Скорректировать дату при необходимости.
+
+Дополнить заказ: адрес/маршрут, способ доставки, упаковка, контакт по отгрузке.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="branch">
+        <div class="bt">Выбор пути доставки</div>
+        <div class="bi"><span>🚗</span><span><b>Самовывоз</b> → Запланирована отгрузка</span></div>
+        <div class="bi"><span>🚚</span><span><b>ТК / Наш транспорт</b> → план → Запланирована отгрузка</span></div>
+        <div class="bi"><span>📦</span><span><b>Догруз</b>: помощь нужна → Поиск транспорта; нет → Запланирована отгрузка</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph5b);color:var(--ph5)">Доставка</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 7</div><div class="st" style="color:var(--ph4)">Поиск транспорта</div>
+        <div class="mt"><span class="ch ch-l">Логист</span><span class="ch ch-t w">1+1 нед</span></div>
+        <div class="pop">Только для заказов, где нужен поиск догруза от нас.
+
+Нашли → «Запланирована отгрузка».
+Нет за неделю → предложить клиенту изменить ставку.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 8</div><div class="st" style="color:var(--ph5)">Запланирована отгрузка</div>
+        <div class="mt"><span class="ch ch-a">Пом. агронома</span><span class="ch ch-t">По плану</span></div>
+        <div class="pop">По календарю маршрутов или по факту прибытия клиента / машины.
+
+Фото отгрузки → менеджеру.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph6b);color:var(--ph6)">Готово</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 9</div><div class="st" style="color:var(--ph6)">Отгружено</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 нед</span></div>
+        <div class="pop">Сбор ОС о качестве и интересе к повторному заказу.
+<div class="pw">⚠ Задача по контрагенту — ОБЯЗАТЕЛЬНО!</div></div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 10</div><div class="st" style="color:var(--ph6)">Получена ОС ✓</div>
+        <div class="mt"><span class="ch ch-t" style="background:#DCFCE7;color:#16A34A">Финал</span></div>
+        <div class="pop">ОС получена. Цикл сделки закрыт.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="exc-bar">
+    <div class="exc-lbl">Исключения</div>
+    <div class="ec" onclick="togE(this)">
+      <div class="es">❌ Отказ</div><div class="eh">Клиент отказался от заказа</div>
+      <div class="pop">Для заказов, от которых клиент отказался.
+<div class="pw">⚠ Обязателен комментарий о причине!</div></div>
+    </div>
+    <div class="ec" onclick="togE(this)">
+      <div class="es">⏸ Отложенный спрос</div><div class="eh">Отложил или не выходит на связь</div>
+      <div class="pop">Клиент решил отложить покупку или длительно не выходит на связь.
+<div class="pw">⚠ По каждому заказу — выставить задачу!</div></div>
+    </div>
+  </div>
+
+</div></div><!-- /gotovo -->
+
+
+<!-- ══ ТЕХ. СКЛАД ══ -->
+<div id="p-t" class="page"><div class="flow">
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph1b);color:var(--ph1)">Прием</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 1</div><div class="st" style="color:var(--ph1)">Новый</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 р.дня</span></div>
+        <div class="pop">Цепочка поиска наличия:
+  1. Склады «Готово»
+  2. Тех. склады Р9
+  3. Тех. склады 144/256
+  4. Адаптация 144/256
+
+Оцениваем сроки готовности → сообщаем клиенту.
+Нет нигде → обсуждаем с руководством.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 2</div><div class="st" style="color:var(--ph1)">Согласование</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">1 нед</span></div>
+        <div class="pop">ОС по срокам. При необходимости — текущее фото из питомника.
+Корректируем заказ, выставляем счёт.
+Клиент первичный → реквизиты + договор.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph2b);color:var(--ph2)">Оплата</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 3</div><div class="st" style="color:var(--ph2)">Счёт выставлен</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">1+1 нед</span></div>
+        <div class="pop">Бронь — только после предоплаты.
+Нет оплаты через неделю → перезвонить.
+Первичный клиент → проверить возврат договора.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 4</div><div class="st" style="color:var(--ph2)">Предоплата получена</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 р.дня</span></div>
+        <div class="pop">В заказе: склад «Готово», дата отгрузки, «Резерв».
+
+Производственное задание:
+  Из заказа → Снабжение → способ: ПЗ; источник: техкарта; кол-во = заказу.
+
+В ПЗ: Резерв + Ожидание; склад мат-лов: тех.; склад прод-ции: «Готово»; дата: за 2 нед до отгрузки.
+<div class="pw">⚠ Критично — от этого зависит вся система!</div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph3b);color:var(--ph3)">Произв.</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 5</div><div class="st" style="color:var(--ph3)">Производство</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t">По сроку</span></div>
+        <div class="pop">Ежедневно: отчёт «Производство» с датой ±2 нед.
+
+Смотрим «Ожидание»:
+  • 0 → готово ✓
+  • Дата < 3 дней, не готово:
+    → звоним в питомник
+    → готовы: отразить в программе
+    → нет: корректируем сроки с клиентом</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph4b);color:var(--ph4)">Сборка</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 6</div><div class="st" style="color:var(--ph4)">На сборку</div>
+        <div class="mt"><span class="ch ch-a">Пом. агронома</span><span class="ch ch-t w">3 р.дня</span></div>
+        <div class="pop">Производство завершено + отгрузка ≤ 2 нед. → площадка «Заказы».
+
+Ежедневный отчёт: «На сборку» + дата ±2 нед.
+После сборки → фотоотчёт менеджеру.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 7</div><div class="st" style="color:var(--ph4)">Заказ собран</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 р.дня</span></div>
+        <div class="pop">✉ Сообщить клиенту + фото.
+💰 Напомнить о доплате.
+📅 Скорректировать дату при необходимости.
+
+Дополнить заказ: адрес/маршрут, способ доставки, упаковка, контакт по отгрузке.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="branch">
+        <div class="bt">Выбор пути доставки</div>
+        <div class="bi"><span>🚗</span><span><b>Самовывоз</b> → Запланирована отгрузка</span></div>
+        <div class="bi"><span>🚚</span><span><b>ТК / Наш транспорт</b> → план → Запланирована отгрузка</span></div>
+        <div class="bi"><span>📦</span><span><b>Догруз</b>: помощь нужна → Поиск транспорта; нет → Запланирована отгрузка</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph5b);color:var(--ph5)">Доставка</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 8</div><div class="st" style="color:var(--ph4)">Поиск транспорта</div>
+        <div class="mt"><span class="ch ch-l">Логист</span><span class="ch ch-t w">1+1 нед</span></div>
+        <div class="pop">Только для заказов, где нужен поиск догруза от нас.
+
+Нашли → «Запланирована отгрузка».
+Нет за неделю → предложить клиенту изменить ставку.</div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 9</div><div class="st" style="color:var(--ph5)">Запланирована отгрузка</div>
+        <div class="mt"><span class="ch ch-a">Пом. агронома</span><span class="ch ch-t">По плану</span></div>
+        <div class="pop">По календарю маршрутов или по факту прибытия клиента / машины.
+
+Фото отгрузки → менеджеру.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="gap"></div>
+
+  <div class="ph-row">
+    <div class="ph-lbl" style="background:var(--ph6b);color:var(--ph6)">Готово</div>
+    <div class="ph-nodes">
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 10</div><div class="st" style="color:var(--ph6)">Отгружено</div>
+        <div class="mt"><span class="ch ch-m">Менеджер ОП</span><span class="ch ch-t w">2 нед</span></div>
+        <div class="pop">Сбор ОС о качестве и интересе к повторному заказу.
+<div class="pw">⚠ Задача по контрагенту — ОБЯЗАТЕЛЬНО!</div></div>
+      </div></div>
+      <div class="arr">→</div>
+      <div class="nd"><div class="card" onclick="tog(this)">
+        <div class="sn">ШАГ 11</div><div class="st" style="color:var(--ph6)">Получена ОС ✓</div>
+        <div class="mt"><span class="ch ch-t" style="background:#DCFCE7;color:#16A34A">Финал</span></div>
+        <div class="pop">ОС получена. Цикл сделки закрыт.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="exc-bar">
+    <div class="exc-lbl">Исключения</div>
+    <div class="ec" onclick="togE(this)">
+      <div class="es">❌ Отказ</div><div class="eh">Клиент отказался от заказа</div>
+      <div class="pop">Для заказов, от которых клиент отказался.
+<div class="pw">⚠ Обязателен комментарий о причине!</div></div>
+    </div>
+    <div class="ec" onclick="togE(this)">
+      <div class="es">⏸ Отложенный спрос</div><div class="eh">Отложил или не выходит на связь</div>
+      <div class="pop">Клиент решил отложить покупку или длительно не выходит на связь.
+<div class="pw">⚠ По каждому заказу — выставить задачу!</div></div>
+    </div>
+  </div>
+
+</div></div><!-- /tech -->
+
+<script>
+function sw(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  btn.classList.add('on');
+  closeAll();
+}
+function closeAll(){
+  document.querySelectorAll('.card.on,.ec.on').forEach(c=>c.classList.remove('on'));
+}
+function tog(card){
+  const was=card.classList.contains('on');
+  closeAll();
+  if(!was){card.classList.add('on');}
+}
+function togE(ec){
+  const was=ec.classList.contains('on');
+  closeAll();
+  if(!was){ec.classList.add('on');}
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.card')&&!e.target.closest('.ec')) closeAll();
+});
+</script>
+</body>
+</html>
