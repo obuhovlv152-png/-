@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Поспелла · База знаний</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F7529E;--brand-d:#D93D85;--brand-l:#FF6699;--brand-p:#FFF0F7;--brand-pp:#FFE0EF;
+  --dark:#0F172A;--mid:#475569;--muted:#94A3B8;--border:#E2E8F0;--bg:#F8FAFC;--card:#fff;
+  --ph1:#2563EB;--ph1b:#EFF6FF;
+  --ph2:#CA8A04;--ph2b:#FEFCE8;
+  --ph3:#7C3AED;--ph3b:#F5F3FF;
+  --ph4:#C2410C;--ph4b:#FFF7ED;
+  --ph5:#0284C7;--ph5b:#F0F9FF;
+  --ph6:#16A34A;--ph6b:#F0FDF4;
+  --green:#16A34A;--green-b:#F0FDF4;
+  --orange:#C2410C;--orange-b:#FFF7ED;
+  --blue:#1D4ED8;--blue-b:#EFF6FF;
+  --red:#DC2626;--red-b:#FEF2F2;
+}
+html,body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+
+/* ── Sidebar layout ────────────────────────────────────────────── */
+.layout{display:flex;min-height:100vh}
+
+/* ── Sidebar ───────────────────────────────────────────────────── */
+.sidebar{
+  width:220px;flex-shrink:0;background:#0F172A;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;z-index:100;
+  overflow-y:auto;
+}
+.sb-logo{
+  padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sb-logo-name{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.sb-logo-sub{font-size:10.5px;color:rgba(255,255,255,.4);margin-top:2px;font-weight:500}
+.sb-logo-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--brand);
+  display:inline-block;margin-right:5px;
+}
+
+.sb-section{padding:16px 12px 8px;font-size:9.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;color:rgba(255,255,255,.3)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 14px;border-radius:7px;margin:1px 6px;
+  font-size:13px;font-weight:600;color:rgba(255,255,255,.6);
+  cursor:pointer;transition:all .15s;text-decoration:none;
+}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav-item.on{background:var(--brand);color:#fff;font-weight:700}
+.nav-item .ni{font-size:15px;flex-shrink:0}
+.nav-sub{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px 6px 42px;border-radius:6px;margin:0 6px;
+  font-size:12px;font-weight:500;color:rgba(255,255,255,.4);
+  cursor:pointer;transition:all .15s;
+}
+.nav-sub:hover{color:rgba(255,255,255,.8)}
+.nav-sub.on{color:var(--brand);font-weight:600}
+
+.sb-contacts{
+  margin-top:auto;padding:16px;border-top:1px solid rgba(255,255,255,.07);
+}
+.sb-contacts-t{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,255,255,.25);margin-bottom:8px}
+.contact-item{font-size:11px;color:rgba(255,255,255,.45);margin-bottom:5px;line-height:1.5}
+.contact-item b{color:rgba(255,255,255,.7);font-weight:600}
+
+/* ── Main area ─────────────────────────────────────────────────── */
+.main{margin-left:220px;flex:1;min-width:0}
+
+/* ── Top bar ───────────────────────────────────────────────────── */
+.topbar{
+  height:52px;background:var(--card);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;
+  position:sticky;top:0;z-index:50;
+  justify-content:space-between;
+}
+.topbar-title{font-size:15px;font-weight:700;color:var(--dark)}
+.topbar-sub{font-size:12px;color:var(--muted);margin-left:10px}
+.topbar-badge{
+  background:var(--brand-p);color:var(--brand);
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;
+}
+
+/* ── Content ───────────────────────────────────────────────────── */
+.content{padding:24px 28px 40px}
+.section{display:none}
+.section.on{display:block}
+
+/* ── Cards ─────────────────────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title .ico{font-size:17px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+
+/* ── Script block ──────────────────────────────────────────────── */
+.script-box{
+  background:#F8FAFC;border:1.5px solid var(--border);border-left:3px solid var(--brand);
+  border-radius:0 8px 8px 0;padding:14px 16px;
+  font-size:13px;line-height:1.9;color:var(--dark);
+  font-family:'Inter',sans-serif;white-space:pre-wrap;margin-bottom:12px;
+}
+.script-box b{color:var(--brand);font-weight:700}
+
+/* ── Objection card ────────────────────────────────────────────── */
+.obj-card{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;margin-bottom:10px;
+}
+.obj-trigger{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  cursor:pointer;background:var(--card);transition:background .15s;
+  user-select:none;
+}
+.obj-trigger:hover{background:var(--bg)}
+.obj-trigger.open{background:var(--brand-p)}
+.obj-q{font-size:13px;font-weight:700;color:var(--dark);flex:1}
+.obj-trigger.open .obj-q{color:var(--brand-d)}
+.obj-chev{color:var(--muted);font-size:10px;transition:transform .15s;flex-shrink:0}
+.obj-trigger.open .obj-chev{transform:rotate(180deg)}
+.obj-body{
+  display:none;padding:12px 16px 14px;
+  border-top:1px solid var(--border);background:#FAFCFF;
+}
+.obj-body.show{display:block}
+.obj-point{
+  display:flex;gap:8px;margin-bottom:7px;font-size:12.5px;line-height:1.7;
+}
+.obj-bullet{
+  width:20px;height:20px;border-radius:50%;background:var(--brand-pp);
+  color:var(--brand);font-size:10px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+
+/* ── BANT ──────────────────────────────────────────────────────── */
+.bant-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bant-item{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 14px;
+}
+.bant-letter{font-size:22px;font-weight:800;color:var(--brand);margin-bottom:2px}
+.bant-label{font-size:11px;font-weight:700;color:var(--mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.bant-q{font-size:12.5px;color:var(--dark);line-height:1.6}
+
+/* ── Client types ──────────────────────────────────────────────── */
+.ctype{
+  display:flex;gap:12px;background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:12px 14px;margin-bottom:8px;
+}
+.ctype-ico{font-size:24px;flex-shrink:0}
+.ctype-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.ctype-arg{font-size:12px;color:var(--mid);line-height:1.6}
+
+/* ── Assortment ────────────────────────────────────────────────── */
+.asm-section{margin-bottom:18px}
+.asm-hdr{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+  color:var(--mid);padding:6px 0;border-bottom:1.5px solid var(--border);margin-bottom:8px;
+}
+.asm-table{width:100%;border-collapse:collapse}
+.asm-table th{
+  text-align:left;font-size:11px;font-weight:700;color:var(--muted);
+  padding:5px 10px;border-bottom:1px solid var(--border);
+}
+.asm-table td{
+  font-size:12.5px;padding:6px 10px;border-bottom:1px solid var(--border);
+  vertical-align:top;line-height:1.5;
+}
+.asm-table tr:last-child td{border-bottom:none}
+.asm-table tr:hover td{background:var(--bg)}
+.price-tag{
+  display:inline-block;background:var(--green-b);color:var(--green);
+  font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:5px;
+}
+.price-tag.alt{background:var(--blue-b);color:var(--blue)}
+.sort-list{font-size:12px;color:var(--mid);line-height:1.8}
+
+/* ── Discount table ────────────────────────────────────────────── */
+.disc-table{width:100%;border-collapse:collapse}
+.disc-table th{
+  background:var(--brand);color:#fff;font-size:12px;font-weight:700;
+  padding:9px 14px;text-align:left;
+}
+.disc-table th:last-child{text-align:right}
+.disc-table td{padding:9px 14px;font-size:13px;border-bottom:1px solid var(--border)}
+.disc-table td:last-child{text-align:right;font-weight:700;color:var(--green)}
+.disc-table tr:nth-child(even) td{background:var(--bg)}
+.disc-note{
+  background:var(--brand-p);border:1px solid var(--brand-pp);border-radius:7px;
+  padding:10px 14px;font-size:12.5px;color:var(--brand-d);font-weight:600;margin-top:10px;
+}
+
+/* ── Status flow (embedded) ────────────────────────────────────── */
+.flow-wrap iframe,.flow-wrap .inner-flow{width:100%;border:none}
+
+/* reuse all flow styles inline */
+.flow-embed{padding:0}
+.ph-row{display:flex;align-items:stretch;gap:0}
+.ph-lbl{writing-mode:vertical-rl;transform:rotate(180deg);font-size:8.5px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;padding:5px 3px;border-radius:6px 0 0 6px;
+  min-width:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;white-space:nowrap}
+.ph-nodes{display:flex;align-items:center;gap:0;flex:1;padding:4px 0 4px 6px;flex-wrap:wrap}
+.nd{display:flex;align-items:center}
+.fc{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:5px 8px;
+  min-width:105px;max-width:135px;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative}
+.fc:hover{border-color:var(--brand);box-shadow:0 2px 10px rgba(247,82,158,.15)}
+.fc.on{border-color:var(--brand);background:#FFF5FA;z-index:10}
+.fsn{font-size:8px;font-weight:700;opacity:.4;margin-bottom:1px}
+.fst{font-size:11px;font-weight:800;line-height:1.2;margin-bottom:3px}
+.fmt{display:flex;flex-wrap:wrap;gap:2px}
+.fch{font-size:8.5px;font-weight:700;padding:1.5px 5px;border-radius:4px;white-space:nowrap}
+.fch-m{background:#FFE4F1;color:var(--brand)}
+.fch-a{background:#FEF3C7;color:#92400E}
+.fch-l{background:#E0F2FE;color:#0369A1}
+.fch-t{background:#F4F4F5;color:#52525B}
+.fch-t.w{background:#FEF9C3;color:#A16207}
+.farr{font-size:11px;color:#CCC;padding:0 3px;flex-shrink:0}
+.fgap{height:14px;display:flex;align-items:center;padding-left:26px}
+.fgap::after{content:'↓';color:rgba(247,82,158,.45);font-size:12px}
+.fpop{display:none;position:absolute;z-index:300;top:calc(100% + 5px);left:0;
+  background:#fff;border:1.5px solid var(--brand);border-radius:8px;padding:9px 11px;width:260px;
+  font-size:10.5px;line-height:1.75;color:#333;white-space:pre-wrap;
+  box-shadow:0 6px 24px rgba(247,82,158,.2)}
+.fc.on .fpop{display:block}
+.fpw{background:#FFF8E1;border:1px solid #FFE082;border-radius:4px;
+  padding:4px 7px;font-size:10px;font-weight:700;color:#7B5800;display:inline-block;margin-top:5px}
+.fbranch{border:1.5px solid #BAE6FD;border-radius:8px;background:#F0F9FF;
+  padding:5px 8px;min-width:170px;max-width:200px}
+.fbt{font-size:8.5px;font-weight:800;color:var(--ph5);text-align:center;margin-bottom:3px}
+.fbi{display:flex;gap:3px;font-size:9.5px;font-weight:600;color:#333;line-height:1.4;margin-bottom:2px}
+.fexc-bar{display:flex;gap:7px;margin-top:10px;padding-top:9px;
+  border-top:2px dashed var(--border);align-items:stretch}
+.fexc-lbl{font-size:8.5px;font-weight:700;color:#AAA;text-transform:uppercase;letter-spacing:1px;
+  writing-mode:vertical-rl;transform:rotate(180deg);display:flex;align-items:center;flex-shrink:0}
+.fec{background:#fff;border:1.5px solid var(--border);border-radius:8px;
+  padding:5px 9px;cursor:pointer;flex:1;position:relative;transition:border-color .15s}
+.fec:hover{border-color:#999}
+.fec.on{border-color:#999;background:#FAFAFA;z-index:10}
+.fec .fpop{border-color:#999;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.fes{font-size:11px;font-weight:800;color:#888}
+.feh{font-size:9.5px;color:#BBB;margin-top:1px}
+.ftab-bar{display:flex;gap:6px;margin-bottom:12px}
+.ftab{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;
+  border:1.5px solid var(--border);background:var(--bg);color:var(--mid);transition:all .15s}
+.ftab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.lgtab{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;
+  border:1.5px solid var(--border);background:var(--bg);color:var(--mid);transition:all .15s}
+.lgtab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* ── Section header ────────────────────────────────────────────── */
+.sec-hdr{margin-bottom:20px}
+.sec-hdr h1{font-size:20px;font-weight:800;margin-bottom:4px}
+.sec-hdr p{font-size:13px;color:var(--muted)}
+
+/* ── Hamburger (mobile) ────────────────────────────────────────── */
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:6px}
+.hamburger span{width:20px;height:2px;background:var(--dark);border-radius:2px;transition:all .2s}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90}
+
+/* ══ RESPONSIVE ════════════════════════════════════════════════ */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
+  .sidebar.open{transform:translateX(0)}
+  .overlay.open{display:block}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .topbar{padding:0 14px}
+  .content{padding:14px 12px 30px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .bant-grid{grid-template-columns:1fr 1fr}
+  .ph-nodes{flex-direction:column;align-items:stretch;padding:4px 0 0 6px;
+    border-left:2px solid var(--border);margin-left:8px}
+  .ph-lbl{writing-mode:horizontal-tb;transform:none;width:100%;height:20px;
+    min-width:unset;border-radius:6px 6px 0 0;padding:0 8px;justify-content:flex-start}
+  .ph-row{flex-direction:column}
+  .farr{display:flex;justify-content:center;font-size:0}
+  .farr::before{content:'↓';font-size:12px;color:#CCC}
+  .fc{min-width:unset;max-width:unset;width:100%}
+  .fpop{width:calc(100vw - 28px);left:50%;transform:translateX(-50%)}
+  .fbranch{min-width:unset;max-width:unset;width:100%}
+  .fexc-bar{flex-direction:column}
+  .fexc-lbl{writing-mode:horizontal-tb;transform:none;height:auto;padding:3px 0}
+  .fec .fpop{width:calc(100vw - 28px);left:50%;transform:translateX(-50%)}
+}
+@media(max-width:480px){
+  .bant-grid{grid-template-columns:1fr}
+  .sec-hdr h1{font-size:17px}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+
+<!-- ═══════════════════════════ SIDEBAR ═══════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-name"><span class="sb-logo-dot"></span>Поспелла</div>
+    <div class="sb-logo-sub">База знаний · Отдел продаж</div>
+  </div>
+
+  <div class="sb-section">Разделы</div>
+  <div class="nav-item on" onclick="go('scripts',this)" id="nav-scripts">
+    <span class="ni">💬</span> Скрипты и возражения
+  </div>
+  <div class="nav-item" onclick="go('assort',this)" id="nav-assort">
+    <span class="ni">🌿</span> Ассортимент и цены
+  </div>
+  <div class="nav-item" onclick="go('statuses',this)" id="nav-statuses">
+    <span class="ni">📋</span> Статусы заказа
+  </div>
+  <div class="nav-item" onclick="go('logistic',this)" id="nav-logistic">
+    <span class="ni">🚚</span> Логистика
+  </div>
+
+  <div class="sb-contacts">
+    <div class="sb-contacts-t">Менеджеры</div>
+    <div class="contact-item"><b>Глеб</b><br>+7 (920) 042-57-38<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dbb4ab9babb4a8abbeb7b7baf5b8b4b6">[email&#160;protected]</a></div>
+    <div class="contact-item"><b>Дмитрий</b><br>+7 (930) 256-10-00<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8be4fbb9cbfbe4f8fbeee7e7eaa5e8e4e6">[email&#160;protected]</a></div>
+    <div class="contact-item"><b>Андрей</b><br>+7 (960) 165-45-51<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18e91d2a1918e9291848d8d80cf828e8c">[email&#160;protected]</a></div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════ MAIN ══════════════════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></div>
+      <span class="topbar-title" id="topbar-title">Скрипты и возражения</span>
+    </div>
+    <span class="topbar-badge">pospella.com</span>
+  </div>
+
+  <div class="content">
+
+  <!-- ══════════════ СКРИПТЫ И ВОЗРАЖЕНИЯ ══════════════ -->
+  <div class="section on" id="sec-scripts">
+    <div class="sec-hdr">
+      <h1>💬 Скрипты и возражения</h1>
+      <p>Квалификация, холодный звонок, работа с возражениями и типы клиентов</p>
+    </div>
+
+    <!-- BANT -->
+    <div class="card">
+      <div class="card-title"><span class="ico">🎯</span> Квалификация лида (BANT)</div>
+      <div class="bant-grid">
+        <div class="bant-item">
+          <div class="bant-letter">B</div>
+          <div class="bant-label">Budget · Бюджет</div>
+          <div class="bant-q">Какой бюджет на закупку посадочного материала в сезоне?</div>
+        </div>
+        <div class="bant-item">
+          <div class="bant-letter">A</div>
+          <div class="bant-label">Authority · Решение</div>
+          <div class="bant-q">Кто принимает решение о поставщике? (закупщик, собственник, агроном)</div>
+        </div>
+        <div class="bant-item">
+          <div class="bant-letter">N</div>
+          <div class="bant-label">Need · Потребность</div>
+          <div class="bant-q">Какой ассортимент нужен? Для розницы или своего производства?</div>
+        </div>
+        <div class="bant-item">
+          <div class="bant-letter">T</div>
+          <div class="bant-label">Timeline · Сроки</div>
+          <div class="bant-q">Когда нужна отгрузка? Есть ли склад для хранения?</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Холодный звонок -->
+    <div class="card">
+      <div class="card-title"><span class="ico">📞</span> Скрипт первого звонка (холодный)</div>
+      <div class="script-box">«Добрый день, [имя]. Меня зовут [имя], <b>Поспелла</b> — питомник из Нижегородской области.
+
+Мы производим более <b>2 млн растений в год</b>, среди клиентов — Фабрика растений Никитенко и садовый центр Веры Глуховой.
+
+Вы сейчас работаете с малиной [или голубикой]?
+Мне интересно понять — <b>закрывает ли ваш текущий поставщик потребность по объёму</b>.»</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">💡 Замените [имя] на реальное имя клиента. Уточните культуру заранее по сегменту.</div>
+    </div>
+
+    <!-- Типы клиентов -->
+    <div class="card">
+      <div class="card-title"><span class="ico">👥</span> Типы клиентов и ключи к ним</div>
+      <div class="ctype">
+        <div class="ctype-ico">🏪</div>
+        <div>
+          <div class="ctype-name">Садовый центр</div>
+          <div class="ctype-arg">Хочет маржу + оборачиваемость. Аргумент — <b>популярные сорта</b>, которые уже знает конечный покупатель (Endless Summer, Annabelle). Бесплатная доставка нашим транспортом в пределах маршрутов.</div>
+        </div>
+      </div>
+      <div class="ctype">
+        <div class="ctype-ico">🌱</div>
+        <div>
+          <div class="ctype-name">Питомник</div>
+          <div class="ctype-arg">Хочет уникальность + качество. Аргумент — <b>редкие сорта</b>, которых нет у конкурентов, сертификаты, ЗКС, лицензии на патентные сорта, агросопровождение.</div>
+        </div>
+      </div>
+      <div class="ctype">
+        <div class="ctype-ico">🫐</div>
+        <div>
+          <div class="ctype-name">Ягодная плантация</div>
+          <div class="ctype-arg">Хочет объём + надёжность. Аргумент — <b>10 000–30 000 шт одного сорта</b>, сроки поставки, сорта с открытыми источниками.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Возражения -->
+    <div class="card">
+      <div class="card-title"><span class="ico">🛡</span> Работа с возражениями</div>
+
+      <div class="obj-card">
+        <div class="obj-trigger" onclick="objToggle(this)">
+          <span style="font-size:16px">💰</span>
+          <span class="obj-q">«Дорого»</span>
+          <span class="obj-chev">▼</span>
+        </div>
+        <div class="obj-body">
+          <div class="obj-point"><div class="obj-bullet">1</div><div>Считаем маржу: <b>150 руб × 3 наценка = 450 руб</b> розница.</div></div>
+          <div class="obj-point"><div class="obj-bullet">2</div><div>«У нас 50 000 минимум — возьмите <b>пробную партию 500 шт</b>, посмотрите на продажи».</div></div>
+          <div class="obj-point"><div class="obj-bullet">3</div><div><b>Упрощённая отбраковка на месте</b> — вы не теряете деньги на выпавших растениях.</div></div>
+          <div class="obj-point"><div class="obj-bullet">4</div><div>Наши растения — <b>инвитро</b>, омоложены, растут быстрее.</div></div>
+          <div class="obj-point"><div class="obj-bullet">5</div><div>Получаете более качественный конечный продукт — <b>можете продать дороже</b>.</div></div>
+          <div class="obj-point"><div class="obj-bullet">6</div><div>«Мы формируем растение так, что вы не тратите время на формировку: <b>перевалил — подождал — продал</b>!»</div></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-trigger" onclick="objToggle(this)">
+          <span style="font-size:16px">🤝</span>
+          <span class="obj-q">«Уже есть поставщик»</span>
+          <span class="obj-chev">▼</span>
+        </div>
+        <div class="obj-body">
+          <div class="obj-point"><div class="obj-bullet">1</div><div>«<b>Какие позиции они не могут закрыть</b> в нужном объёме?»</div></div>
+          <div class="obj-point"><div class="obj-bullet">2</div><div>Малина крупным объёмом — наше УТП. «Даёт ли ваш поставщик такой <b>ассортимент в одном месте</b>?»</div></div>
+          <div class="obj-point"><div class="obj-bullet">3</div><div>«Есть ли у вашего поставщика <b>собственная доставка</b>?»</div></div>
+          <div class="obj-point"><div class="obj-bullet">4</div><div>«Вам приходится закупаться на весь сезон — <b>у нас можно дробно из наличия</b>».</div></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-trigger" onclick="objToggle(this)">
+          <span style="font-size:16px">🤔</span>
+          <span class="obj-q">«Хотим подумать»</span>
+          <span class="obj-chev">▼</span>
+        </div>
+        <div class="obj-body">
+          <div class="obj-point"><div class="obj-bullet">1</div><div>Если клиент первичный: «Давайте дадим вам на первый заказ <b>скидку 10 000 рублей</b>, если сделаете заказ в течение 5 дней».</div></div>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-trigger" onclick="objToggle(this)">
+          <span style="font-size:16px">🚚</span>
+          <span class="obj-q">«Далеко везти»</span>
+          <span class="obj-chev">▼</span>
+        </div>
+        <div class="obj-body">
+          <div class="obj-point"><div class="obj-bullet">1</div><div>Два склада: <b>Нижегородская обл. + Дагестан</b> (с. Яраг-Казмаляр). Уточнить регион клиента.</div></div>
+          <div class="obj-point"><div class="obj-bullet">2</div><div>Посмотреть файл с логистикой, предложить варианты.</div></div>
+          <div class="obj-point"><div class="obj-bullet">3</div><div>«Можем сдать в <b>транспортную компанию</b> в ближайшем к вам городе из наших маршрутов».</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- УТП -->
+    <div class="card">
+      <div class="card-title"><span class="ico">⭐</span> Наши УТП — аргументы в переговорах</div>
+      <div class="grid2">
+        <div style="background:var(--green-b);border:1px solid #BBF7D0;border-radius:8px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px">📦 Объём</div>
+          <div style="font-size:12px;color:var(--dark);line-height:1.6">Малина до <b>30 000 шт</b> в одни руки. Более 2 млн растений в год.</div>
+        </div>
+        <div style="background:var(--blue-b);border:1px solid #BFDBFE;border-radius:8px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">🚐 Логистика</div>
+          <div style="font-size:12px;color:var(--dark);line-height:1.6"><b>Собственные автомобили</b> + 2 склада (НН и Дагестан).</div>
+        </div>
+        <div style="background:var(--brand-p);border:1px solid var(--brand-pp);border-radius:8px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:700;color:var(--brand-d);margin-bottom:6px">🌿 Ассортимент</div>
+          <div style="font-size:12px;color:var(--dark);line-height:1.6"><b>Широкий ассортимент</b> в одном месте. Редкие и патентные сорта.</div>
+        </div>
+        <div style="background:var(--ph2b);border:1px solid #FDE68A;border-radius:8px;padding:12px 14px">
+          <div style="font-size:12px;font-weight:700;color:var(--ph2);margin-bottom:6px">🏆 Репутация</div>
+          <div style="font-size:12px;color:var(--dark);line-height:1.6">Участники <b>отраслевых выставок</b>, ~100 партнёров, известны по всей России.</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /scripts -->
+
+
+  <!-- ══════════════ АССОРТИМЕНТ И ЦЕНЫ ══════════════ -->
+  <div class="section" id="sec-assort">
+    <div class="sec-hdr">
+      <h1>🌿 Ассортимент и цены</h1>
+      <p>Все позиции в контейнере Р9. Цены указаны за 1 растение без скидки.</p>
+    </div>
+
+    <!-- Система скидок -->
+    <div class="card">
+      <div class="card-title"><span class="ico">💎</span> Накопительная система скидок (в год)</div>
+      <table class="disc-table">
+        <thead><tr><th>Сумма закупки за год</th><th style="text-align:right">Скидка</th></tr></thead>
+        <tbody>
+          <tr><td>от 250 000 руб</td><td>2,5%</td></tr>
+          <tr><td>от 500 000 руб</td><td>5%</td></tr>
+          <tr><td>от 1 000 000 руб</td><td>10%</td></tr>
+          <tr><td>от 2 000 000 руб</td><td>15%</td></tr>
+        </tbody>
+      </table>
+      <div class="disc-note">⚠ Минимальный заказ: <b>50 000 руб</b></div>
+    </div>
+
+    <!-- Ягодные -->
+    <div class="card">
+      <div class="card-title"><span class="ico">🫐</span> Ягодные культуры — B2B приоритет</div>
+
+      <div class="asm-section">
+        <div class="asm-hdr">🫐 Голубика <span class="price-tag" style="margin-left:auto">150 руб / шт</span></div>
+        <div class="sort-list">Osorno · Bluecrop · Pink Lemonade · Reka · Elizabeth · Nortland</div>
+      </div>
+
+      <div class="asm-section">
+        <div class="asm-hdr">🍓 Малина <span style="font-size:11px;color:var(--mid);margin-left:6px">до 30 000 шт в одни руки</span><span class="price-tag" style="margin-left:auto">150 руб / шт</span></div>
+        <div class="sort-list">Polonez · Przehyba · Vajolet · Glen Ample · Crimson Night · Тибетская · Enrosadira · Maravilla · Halley · Primalba · Delniwa</div>
+      </div>
+
+      <div class="asm-section">
+        <div class="asm-hdr">🍯 Жимолость <span class="price-tag" style="margin-left:auto">150 руб / шт</span></div>
+        <div class="sort-list">Aurora · Boreal Beast · Boreal Blizzard · Boreal Beauty · Honey Bee · Strawberry Sensation</div>
+      </div>
+
+      <div class="asm-section">
+        <div class="asm-hdr">🫙 Ежевика <span class="price-tag" style="margin-left:auto">150 руб / шт</span></div>
+        <div class="sort-list">Loch Tay · Чачанска Бестрна · Chester · Triple Crown · Natchez · Victoria</div>
+      </div>
+
+      <div class="grid3">
+        <div>
+          <div class="asm-hdr">Арония <span class="price-tag alt" style="margin-left:auto">150 руб</span></div>
+          <div class="sort-list">Надзея · Мулатка</div>
+        </div>
+        <div>
+          <div class="asm-hdr">Брусника <span class="price-tag" style="margin-left:auto">190 руб</span></div>
+          <div class="sort-list">Fire Balls · Koralle</div>
+        </div>
+        <div>
+          <div class="asm-hdr">Ирга <span class="price-tag" style="margin-left:auto">190 руб</span></div>
+          <div class="sort-list">Greatberry Farm · Smokey</div>
+        </div>
+      </div>
+
+      <div class="asm-section" style="margin-top:8px">
+        <div class="asm-hdr">Смородина <span class="price-tag alt" style="margin-left:auto">150 руб</span></div>
+        <div class="sort-list">Селеченская 2</div>
+      </div>
+    </div>
+
+    <!-- Декоративные -->
+    <div class="card">
+      <div class="card-title"><span class="ico">🌸</span> Декоративные культуры</div>
+      <table class="asm-table">
+        <thead><tr><th>Культура</th><th>Сорта</th><th>Цена</th></tr></thead>
+        <tbody>
+          <tr><td><b>Рододендрон</b></td><td class="sort-list">7 сортов</td><td><span class="price-tag">180 руб</span></td></tr>
+          <tr><td><b>Гортензия</b></td><td class="sort-list">9 сортов (в т.ч. Annabelle, Endless Summer)</td><td><span class="price-tag">130–180 руб</span></td></tr>
+          <tr><td><b>Сирень</b></td><td class="sort-list">8 сортов</td><td><span class="price-tag">160 руб</span></td></tr>
+          <tr><td><b>Клематис</b></td><td class="sort-list">14 сортов</td><td><span class="price-tag">190 руб</span></td></tr>
+          <tr><td><b>Гейхера</b></td><td class="sort-list">10 сортов</td><td><span class="price-tag">140 руб</span></td></tr>
+          <tr><td><b>Вейгела</b></td><td class="sort-list">5 сортов</td><td><span class="price-tag">140 руб</span></td></tr>
+          <tr><td><b>Флоксы</b></td><td class="sort-list">8 сортов</td><td><span class="price-tag">150 руб</span></td></tr>
+          <tr><td><b>Вероника / Вероникаструм</b></td><td class="sort-list">5 сортов</td><td><span class="price-tag">150 руб</span></td></tr>
+          <tr><td><b>Горечавка</b></td><td class="sort-list">4 сорта</td><td><span class="price-tag">180 руб</span></td></tr>
+          <tr><td><b>Лаванда</b></td><td class="sort-list">2 сорта</td><td><span class="price-tag">150 руб</span></td></tr>
+          <tr><td><b>Вишня декоративная (Сакура)</b></td><td class="sort-list">—</td><td><span class="price-tag">190 руб</span></td></tr>
+          <tr><td><b>Чубушник, Магнолия, Береза</b></td><td class="sort-list">—</td><td><span class="price-tag">120–240 руб</span></td></tr>
+          <tr><td><b>Примула, Снежноягодник, Гаультерия, Герань</b></td><td class="sort-list">—</td><td><span class="price-tag">120–240 руб</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Комнатные -->
+    <div class="card">
+      <div class="card-title"><span class="ico">🪴</span> Комнатные растения</div>
+      <table class="asm-table">
+        <thead><tr><th>Культура</th><th>Цена</th></tr></thead>
+        <tbody>
+          <tr><td><b>Бегония</b></td><td><span class="price-tag alt">190 руб</span></td></tr>
+          <tr><td><b>Спатифиллум</b></td><td><span class="price-tag alt">190 руб</span></td></tr>
+          <tr><td><b>Эпипремнум</b></td><td><span class="price-tag alt">190 руб</span></td></tr>
+          <tr><td><b>Антуриум</b></td><td><span class="price-tag alt">440 руб</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div><!-- /assort -->
+
+
+  <!-- ══════════════ СТАТУСЫ ЗАКАЗА ══════════════ -->
+  <div class="section" id="sec-statuses">
+    <div class="sec-hdr">
+      <h1>📋 Статусы заказа</h1>
+      <p>Порядок обработки заказа от поступления до обратной связи</p>
+    </div>
+
+    <div class="ftab-bar">
+      <button class="ftab on" onclick="fSw('fg',this)">📦 Склад Готово</button>
+      <button class="ftab" onclick="fSw('ft',this)">🏭 Тех. склад</button>
+    </div>
+
+    <!-- Склад Готово -->
+    <div id="fg" class="card flow-embed">
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph1b);color:var(--ph1)">Прием</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 1</div><div class="fst" style="color:var(--ph1)">Новый</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 р.дня</span></div>
+            <div class="fpop">Проверяем наличие по «Мой склад».
+Для товаров на складах «Готово» — отправляем фото из еженедельной подборки клиенту.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 2</div><div class="fst" style="color:var(--ph1)">Согласование</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">1 нед</span></div>
+            <div class="fpop">ОС по фото, корректируем заказ.
+Выставляем счёт.
+Клиент первичный → реквизиты + договор.</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph2b);color:var(--ph2)">Оплата</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 3</div><div class="fst" style="color:var(--ph2)">Счёт выставлен</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">1+1 нед</span></div>
+            <div class="fpop">Бронь только после предоплаты.
+Нет оплаты через неделю → перезвонить.
+Первичный → проверить возврат договора.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 4</div><div class="fst" style="color:var(--ph2)">Предоплата получена</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 р.дня</span></div>
+            <div class="fpop">ОБЯЗАТЕЛЬНО:
+  1. Галочка «Резерв»
+  2. Склад отгрузки
+  3. Планируемая дата отгрузки</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph4b);color:var(--ph4)">Сборка</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 5</div><div class="fst" style="color:var(--ph4)">На сборку</div>
+            <div class="fmt"><span class="fch fch-a">Пом. агронома</span><span class="fch fch-t w">3 р.дня</span></div>
+            <div class="fpop">Отгрузка ≤ 2 нед → площадка «Заказы».
+Ежедневный отчёт: статус «На сборку» + дата ±2 нед.
+После сборки → фотоотчёт менеджеру.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 6</div><div class="fst" style="color:var(--ph4)">Заказ собран</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 р.дня</span></div>
+            <div class="fpop">✉ Сообщить клиенту + фото.
+💰 Напомнить о доплате.
+📅 Скорректировать дату.
+Дополнить: адрес, способ доставки, упаковка, контакт.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="fbranch">
+            <div class="fbt">Выбор пути доставки</div>
+            <div class="fbi"><span>🚗</span><span><b>Самовывоз</b> → Запланирована отгрузка</span></div>
+            <div class="fbi"><span>🚚</span><span><b>ТК / Наш транспорт</b> → план → Запланирована</span></div>
+            <div class="fbi"><span>📦</span><span><b>Догруз</b>: нужна помощь → Поиск транспорта</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph5b);color:var(--ph5)">Доставка</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 7</div><div class="fst" style="color:var(--ph4)">Поиск транспорта</div>
+            <div class="fmt"><span class="fch fch-l">Логист</span><span class="fch fch-t w">1+1 нед</span></div>
+            <div class="fpop">Только для поиска догруза от нас.
+Нашли → «Запланирована отгрузка».
+Нет за неделю → предложить изменить ставку.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 8</div><div class="fst" style="color:var(--ph5)">Запланирована отгрузка</div>
+            <div class="fmt"><span class="fch fch-a">Пом. агронома</span><span class="fch fch-t">По плану</span></div>
+            <div class="fpop">По календарю маршрутов или по факту прибытия.
+Фото отгрузки → менеджеру.</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph6b);color:var(--ph6)">Готово</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 9</div><div class="fst" style="color:var(--ph6)">Отгружено</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 нед</span></div>
+            <div class="fpop">Сбор ОС о качестве и интересе к повторному заказу.
+<div class="fpw">⚠ Задача по контрагенту — ОБЯЗАТЕЛЬНО!</div></div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 10</div><div class="fst" style="color:var(--ph6)">Получена ОС ✓</div>
+            <div class="fmt"><span class="fch fch-t" style="background:#DCFCE7;color:#16A34A">Финал</span></div>
+            <div class="fpop">ОС получена. Цикл сделки закрыт.</div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="fexc-bar">
+        <div class="fexc-lbl">Исключения</div>
+        <div class="fec" onclick="fTogE(this)">
+          <div class="fes">❌ Отказ</div><div class="feh">Клиент отказался</div>
+          <div class="fpop">Для заказов, от которых клиент отказался.
+<div class="fpw">⚠ Обязателен комментарий о причине!</div></div>
+        </div>
+        <div class="fec" onclick="fTogE(this)">
+          <div class="fes">⏸ Отложенный спрос</div><div class="feh">Отложил или не выходит на связь</div>
+          <div class="fpop">Клиент отложил покупку или не выходит на связь.
+<div class="fpw">⚠ По каждому заказу — выставить задачу!</div></div>
+        </div>
+      </div>
+    </div><!-- /fg -->
+
+    <!-- Тех. склад -->
+    <div id="ft" class="card flow-embed" style="display:none">
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph1b);color:var(--ph1)">Прием</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 1</div><div class="fst" style="color:var(--ph1)">Новый</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 р.дня</span></div>
+            <div class="fpop">Цепочка: Готово → Тех.склад Р9 → 144/256 → Адаптация.
+Сроки → сообщаем клиенту. Нет нигде → с руководством.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 2</div><div class="fst" style="color:var(--ph1)">Согласование</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">1 нед</span></div>
+            <div class="fpop">ОС по срокам. При необходимости — фото из питомника.
+Корректируем заказ, счёт, договор.</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph2b);color:var(--ph2)">Оплата</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 3</div><div class="fst" style="color:var(--ph2)">Счёт выставлен</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">1+1 нед</span></div>
+            <div class="fpop">Бронь только после предоплаты.
+Нет оплаты → перезвонить. Первичный → договор.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 4</div><div class="fst" style="color:var(--ph2)">Предоплата получена</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 р.дня</span></div>
+            <div class="fpop">Склад «Готово», дата отгрузки, «Резерв».
+Создать ПЗ: Снабжение → ПЗ → техкарта → кол-во.
+В ПЗ: Резерв+Ожидание; склад мат: тех.; продукция: Готово; дата: за 2 нед.
+<div class="fpw">⚠ Критично — зависит вся система!</div></div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph3b);color:var(--ph3)">Произв.</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 5</div><div class="fst" style="color:var(--ph3)">Производство</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t">По сроку</span></div>
+            <div class="fpop">Ежедневно: отчёт ±2 нед. Смотрим «Ожидание»:
+  • 0 → готово ✓
+  • Дата &lt; 3 дней, не готово → звоним в питомник.</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph4b);color:var(--ph4)">Сборка</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 6</div><div class="fst" style="color:var(--ph4)">На сборку</div>
+            <div class="fmt"><span class="fch fch-a">Пом. агронома</span><span class="fch fch-t w">3 р.дня</span></div>
+            <div class="fpop">Производство завершено + отгрузка ≤ 2 нед → площадка «Заказы».
+Ежедневный отчёт. После сборки → фотоотчёт.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 7</div><div class="fst" style="color:var(--ph4)">Заказ собран</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 р.дня</span></div>
+            <div class="fpop">✉ Сообщить + фото. 💰 Доплата. 📅 Дата.
+Дополнить: адрес, способ, упаковка, контакт.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="fbranch">
+            <div class="fbt">Выбор пути доставки</div>
+            <div class="fbi"><span>🚗</span><span><b>Самовывоз</b> → Запланирована</span></div>
+            <div class="fbi"><span>🚚</span><span><b>ТК / Наш транспорт</b> → план</span></div>
+            <div class="fbi"><span>📦</span><span><b>Догруз</b> → Поиск транспорта</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph5b);color:var(--ph5)">Доставка</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 8</div><div class="fst" style="color:var(--ph4)">Поиск транспорта</div>
+            <div class="fmt"><span class="fch fch-l">Логист</span><span class="fch fch-t w">1+1 нед</span></div>
+            <div class="fpop">Поиск догруза. Нашли → Запланирована.
+Нет за неделю → изменить ставку.</div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 9</div><div class="fst" style="color:var(--ph5)">Запланирована отгрузка</div>
+            <div class="fmt"><span class="fch fch-a">Пом. агронома</span><span class="fch fch-t">По плану</span></div>
+            <div class="fpop">По календарю или по факту прибытия.
+Фото отгрузки → менеджеру.</div>
+          </div></div>
+        </div>
+      </div>
+      <div class="fgap"></div>
+
+      <div class="ph-row">
+        <div class="ph-lbl" style="background:var(--ph6b);color:var(--ph6)">Готово</div>
+        <div class="ph-nodes">
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 10</div><div class="fst" style="color:var(--ph6)">Отгружено</div>
+            <div class="fmt"><span class="fch fch-m">Менеджер ОП</span><span class="fch fch-t w">2 нед</span></div>
+            <div class="fpop">Сбор ОС. <div class="fpw">⚠ Задача по контрагенту — ОБЯЗАТЕЛЬНО!</div></div>
+          </div></div>
+          <div class="farr">→</div>
+          <div class="nd"><div class="fc" onclick="fTog(this)">
+            <div class="fsn">ШАГ 11</div><div class="fst" style="color:var(--ph6)">Получена ОС ✓</div>
+            <div class="fmt"><span class="fch fch-t" style="background:#DCFCE7;color:#16A34A">Финал</span></div>
+            <div class="fpop">ОС получена. Цикл сделки закрыт.</div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="fexc-bar">
+        <div class="fexc-lbl">Исключения</div>
+        <div class="fec" onclick="fTogE(this)">
+          <div class="fes">❌ Отказ</div><div class="feh">Клиент отказался</div>
+          <div class="fpop">Для заказов, от которых клиент отказался.
+<div class="fpw">⚠ Комментарий о причине — обязателен!</div></div>
+        </div>
+        <div class="fec" onclick="fTogE(this)">
+          <div class="fes">⏸ Отложенный спрос</div><div class="feh">Отложил или не выходит на связь</div>
+          <div class="fpop">Клиент отложил или не выходит на связь.
+<div class="fpw">⚠ По каждому заказу — выставить задачу!</div></div>
+        </div>
+      </div>
+    </div><!-- /ft -->
+
+  </div><!-- /statuses -->
+
+  <!-- ══════════════ ЛОГИСТИКА ══════════════ -->
+  <div class="section" id="sec-logistic">
+    <div class="sec-hdr">
+      <h1>🚚 Логистика</h1>
+      <p>Маршруты доставки собственным транспортом. Нажми на маршрут — увидишь города и условия.</p>
+    </div>
+
+    <!-- Source tabs -->
+    <div class="ftab-bar">
+      <button class="lgtab on" onclick="lgSw('nn',this)">📍 Нижний Новгород</button>
+      <button class="lgtab" onclick="lgSw('dag',this)">📍 Дагестан</button>
+    </div>
+
+    <!-- ── НИЖНИЙ НОВГОРОД ── -->
+    <div id="lg-nn">
+
+      <!-- Legend -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mid)"><span style="width:10px;height:10px;border-radius:50%;background:#16A34A;display:inline-block"></span>Бесплатная доставка</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mid)"><span style="width:10px;height:10px;border-radius:50%;background:#CA8A04;display:inline-block"></span>Доставка от суммы</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mid)"><span style="width:10px;height:10px;border-radius:50%;background:#DC2626;display:inline-block"></span>Ниже порога — доп. оплата</div>
+      </div>
+
+      <!-- Schedule Газель — visual calendar -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title"><span class="ico">📅</span> График Газель — 3-недельный цикл</div>
+        <!-- Legend -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:14px;padding:8px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#4B8BF5;display:inline-block;flex-shrink:0"></span>Йошкар-Ола / Казань</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#F5A623;display:inline-block;flex-shrink:0"></span>Нижний Новгород</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#34C77B;display:inline-block;flex-shrink:0"></span>Владимир / Рязань</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#A855F7;display:inline-block;flex-shrink:0"></span>Москва / МО</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#E05252;display:inline-block;flex-shrink:0"></span>Саранск / Ульяновск</div>
+        </div>
+        <!-- 3-column week grid -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+
+          <!-- НЕДЕЛЯ 1 -->
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+            <div style="padding:6px 10px;font-size:11px;font-weight:700;color:var(--mid);border-bottom:1px solid var(--border);background:var(--bg)">Неделя 1</div>
+            <!-- Пн -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПН</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#EBF3FF;color:#1A5CAF;margin-bottom:2px">Марш. 1</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Чебоксары → Йошкар-Ола</div>
+                <div style="font-size:9.5px;color:#AAA">Андрей</div>
+              </div>
+            </div>
+            <!-- Вт -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FFF4E0;color:#A06010;margin-bottom:2px">НН-В</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">ТК, СЦ Ларина, Кащенко, питомник</div>
+              </div>
+            </div>
+            <!-- Ср -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СР</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FFF4E0;color:#A06010;margin-bottom:2px">НН-2</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Новинки, Дружный, Автозавод, Дзержинск</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <!-- Чт -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ЧТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#E8F8EE;color:#1A7A40;margin-bottom:2px">Марш. 3</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Богородск → Ковров (переезд)</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <!-- Пт -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#E8F8EE;color:#1A7A40;margin-bottom:2px">Марш. 3</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Владимир — выгрузка + обратно</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <!-- Сб -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СБ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F5EEFF;color:#7B2FBE;margin-bottom:2px">Марш. 7.1</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Восток МО (Балашиха) — переезд</div>
+                <div style="font-size:9.5px;color:#AAA">Дмитрий</div>
+              </div>
+            </div>
+            <!-- Вс -->
+            <div style="display:flex;align-items:stretch;min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВС</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F5EEFF;color:#7B2FBE;margin-bottom:2px">Марш. 7.1</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Балашиха — выгрузка</div>
+                <div style="font-size:9.5px;color:#AAA">Дмитрий</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- НЕДЕЛЯ 2 -->
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+            <div style="padding:6px 10px;font-size:11px;font-weight:700;color:var(--mid);border-bottom:1px solid var(--border);background:var(--bg)">Неделя 2</div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПН</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#EBF3FF;color:#1A5CAF;margin-bottom:2px">Марш. 2.1</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Волжск, Зеленодольск → Казань (север)</div>
+                <div style="font-size:9.5px;color:#AAA">Андрей</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FFF4E0;color:#A06010;margin-bottom:2px">НН-В</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">ТК, СЦ Ларина, Кащенко, питомник</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СР</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FFF4E0;color:#A06010;margin-bottom:2px">НН-3</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Сормово, Балахна, Заволжье, Городец, Бор</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ЧТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#E8F8EE;color:#1A7A40;margin-bottom:2px">Марш. 4</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Арзамас → Рязань (переезд + выгрузки)</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#E8F8EE;color:#1A7A40;margin-bottom:2px">Марш. 4</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Рязань — выгрузка + обратно</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СБ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F5EEFF;color:#7B2FBE;margin-bottom:2px">Марш. 7.2</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Юг МО (Подольск) — переезд</div>
+                <div style="font-size:9.5px;color:#AAA">Андрей</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВС</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F5EEFF;color:#7B2FBE;margin-bottom:2px">Марш. 7.2</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Подольск — выгрузка</div>
+                <div style="font-size:9.5px;color:#AAA">Андрей</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- НЕДЕЛЯ 3 -->
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+            <div style="padding:6px 10px;font-size:11px;font-weight:700;color:var(--mid);border-bottom:1px solid var(--border);background:var(--bg)">Неделя 3</div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПН</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#EBF3FF;color:#1A5CAF;margin-bottom:2px">Марш. 2.2</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Кугеси, Цивильск → Казань (юг)</div>
+                <div style="font-size:9.5px;color:#AAA">Андрей</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FFF4E0;color:#A06010;margin-bottom:2px">НН-В</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">ТК, СЦ Ларина, Кащенко, питомник</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СР</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FEE8E8;color:#9B2020;margin-bottom:2px">Марш. 6</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Спасское, Сергач, Лукоянов → Саранск</div>
+                <div style="font-size:9.5px;color:#AAA">Дмитрий</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ЧТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FEE8E8;color:#9B2020;margin-bottom:2px">Марш. 5</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Канаш, Батырево → Ульяновск</div>
+                <div style="font-size:9.5px;color:#AAA">Андрей</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПТ</div>
+              <div style="flex:1;padding:4px 7px;display:flex;align-items:center">
+                <div style="font-size:11px;color:#AAA;font-style:italic">Резервный день</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СБ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F5EEFF;color:#7B2FBE;margin-bottom:2px">Марш. 7.3</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Север МО (Химки) — переезд</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:stretch;min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВС</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F5EEFF;color:#7B2FBE;margin-bottom:2px">Марш. 7.3</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.3">Химки — выгрузка</div>
+                <div style="font-size:9.5px;color:#AAA">Глеб</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /grid -->
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--mid);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">🚐 Маршруты Газель</div>
+      <div class="grid2">
+
+        <!-- Маршрут 1 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 1</span>
+            <span class="obj-q">Йошкар-Ола</span>
+            <span style="font-size:10px;color:var(--muted)">3 города</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Чебоксары</td><td>103</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Новочебоксарск</td><td>119</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td><b>Йошкар-Ола</b></td><td>204</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 2.1 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 2.1</span>
+            <span class="obj-q">Казань (север)</span>
+            <span style="font-size:10px;color:var(--muted)">3 города</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Волжск</td><td>218</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td>Зеленодольск</td><td>228</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td><b>Казань</b></td><td>272</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">3 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 2.2 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 2.2</span>
+            <span class="obj-q">Казань (юг)</span>
+            <span style="font-size:10px;color:var(--muted)">3 города</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Кугеси</td><td>101</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td>Цивильск</td><td>125</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td><b>Казань</b></td><td>255</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">3 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 3 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 3</span>
+            <span class="obj-q">Владимир</span>
+            <span style="font-size:10px;color:var(--muted)">7 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Богородск</td><td>175</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">1 000</td></tr>
+              <tr><td>Ворсма</td><td>198</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Павлово</td><td>213</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Гороховец</td><td>261</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td>Вязники</td><td>300</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Ковров</td><td>370</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">4 000</td></tr>
+              <tr><td><b>Владимир</b></td><td>456</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">4 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 4 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 4</span>
+            <span class="obj-q">Рязань</span>
+            <span style="font-size:10px;color:var(--muted)">9 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Арзамас</td><td>182</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Ардатов</td><td>252</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Кулебаки</td><td>296</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Навашино</td><td>329</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td>Муром</td><td>372</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">3 500</td></tr>
+              <tr><td>Меленки</td><td>397</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">4 000</td></tr>
+              <tr><td>Касимов</td><td>449</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Спас-Клепики</td><td>537</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Рязань</b></td><td>613</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">6 000</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 5 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 5</span>
+            <span class="obj-q">Ульяновск</span>
+            <span style="font-size:10px;color:var(--muted)">3 города</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Канаш</td><td>142</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Батырево</td><td>197</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td><b>Ульяновск</b></td><td>308</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">3 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 6 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 6</span>
+            <span class="obj-q">Саранск</span>
+            <span style="font-size:10px;color:var(--muted)">5 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Спасское</td><td>27</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">1 500</td></tr>
+              <tr><td>Сергач</td><td>67</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">1 500</td></tr>
+              <tr><td>Лукоянов</td><td>158</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">1 500</td></tr>
+              <tr><td>Починки</td><td>211</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">1 500</td></tr>
+              <tr><td><b>Саранск</b></td><td>277</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">2 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 7.1 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 7.1</span>
+            <span class="obj-q">Восток МО (Балашиха)</span>
+            <span style="font-size:10px;color:var(--muted)">15 точек</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Лакинск</td><td>404</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Петушки</td><td>442</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Покров</td><td>462</td><td>50 000</td><td style="color:#16A34A;font-weight:700">90 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Электрогорск</td><td>491</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Ногинск</td><td>516</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Балашиха</td><td>554</td><td>50 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td colspan="5" style="font-size:11px;color:var(--mid);font-style:italic">Обратный путь из Балашихи: Электроугли, Электросталь, Павловский посад, Дрезна, Ликино-Дулево, Орехово-Зуево — 44 128 руб / 150 000 бесплатно</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 7.2 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 7.2</span>
+            <span class="obj-q">Юг МО (Подольск)</span>
+            <span style="font-size:10px;color:var(--muted)">8 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Раменское</td><td>597</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Жуковский</td><td>608</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Люберцы</td><td>634</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Котельники</td><td>638</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Видное</td><td>662</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Подольск</b></td><td>689</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Домодедово</td><td>715</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 7.3 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 7.3</span>
+            <span class="obj-q">Север МО (Химки)</span>
+            <span style="font-size:10px;color:var(--muted)">5 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Пушкино</td><td>555</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Королев</td><td>573</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Мытищи</td><td>580</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Химки</b></td><td>680</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Долгопрудный</td><td>692</td><td>50 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+      </div><!-- /grid2 газель -->
+
+      <!-- Десятитонник -->
+      <div style="font-size:13px;font-weight:700;color:var(--mid);margin:18px 0 10px;text-transform:uppercase;letter-spacing:.5px">🚛 Маршруты Десятитонник</div>
+      <div class="grid2">
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д1</span>
+            <span class="obj-q">Екатеринбург</span>
+            <span style="font-size:10px;color:var(--muted)">2 города · 3 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 3 000 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Первоуральск</td><td>1 121</td><td>100 000</td><td style="color:#16A34A;font-weight:700">200 000</td><td style="color:#DC2626">9 500</td></tr>
+              <tr><td><b>Екатеринбург</b></td><td>1 138</td><td>100 000</td><td style="color:#16A34A;font-weight:700">200 000</td><td style="color:#DC2626">9 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д2</span>
+            <span class="obj-q">Уфа</span>
+            <span style="font-size:10px;color:var(--muted)">4 города · 3 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 2 200 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Альметьевск</td><td>500</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Бугульма</td><td>559</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Октябрьский</td><td>611</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Уфа</b></td><td>783</td><td>90 000</td><td style="color:#16A34A;font-weight:700">180 000</td><td style="color:#DC2626">6 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д3</span>
+            <span class="obj-q">Самара</span>
+            <span style="font-size:10px;color:var(--muted)">4 города · 2 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 2 200 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Димитровград</td><td>400</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 000</td></tr>
+              <tr><td>Тольятти</td><td>504</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Самара</b></td><td>599</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Новокуйбышевск</td><td>618</td><td>80 000</td><td style="color:#16A34A;font-weight:700">160 000</td><td style="color:#DC2626">6 000</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д4</span>
+            <span class="obj-q">Ярославль — Рыбинск</span>
+            <span style="font-size:10px;color:var(--muted)">9 городов · 3 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 2 200 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Шуя</td><td>372</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Иваново</td><td>410</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Кострома</td><td>523</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Ярославль</b></td><td>607</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Рыбинск</td><td>695</td><td>100 000</td><td style="color:#16A34A;font-weight:700">200 000</td><td style="color:#DC2626">8 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д5</span>
+            <span class="obj-q">Саратов</span>
+            <span style="font-size:10px;color:var(--muted)">3 города · 2 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 2 200 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Пенза</td><td>427</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 000</td></tr>
+              <tr><td><b>Саратов</b></td><td>608</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Энгельс</td><td>618</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д6</span>
+            <span class="obj-q">Ижевск</span>
+            <span style="font-size:10px;color:var(--muted)">7 городов · 3 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Нижнекамск</td><td>460</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Набережные Челны</td><td>514</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Елабуга</td><td>545</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Можга</td><td>652</td><td>75 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Ижевск</b></td><td>753</td><td>100 000</td><td style="color:#16A34A;font-weight:700">200 000</td><td style="color:#DC2626">6 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#F5F3FF;color:#7C3AED;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Д7</span>
+            <span class="obj-q">Воронеж — Тамбов — Липецк</span>
+            <span style="font-size:10px;color:var(--muted)">3 города · 3 дня</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 2 200 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Тамбов</td><td>657</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Воронеж</b></td><td>879</td><td>90 000</td><td style="color:#16A34A;font-weight:700">180 000</td><td style="color:#DC2626">6 500</td></tr>
+              <tr><td>Липецк</td><td>—</td><td>90 000</td><td style="color:#16A34A;font-weight:700">180 000</td><td style="color:#DC2626">6 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FEF2F2;color:#DC2626;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Ф1</span>
+            <span class="obj-q">Санкт-Петербург</span>
+            <span style="font-size:10px;color:var(--muted)">2 города · разовый</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <div style="font-size:11px;color:var(--mid);margin-bottom:6px">Цена 1 км: 45 руб · Платная дорога: 8 500 руб</div>
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Тверь</td><td>796</td><td>150 000</td><td style="color:#16A34A;font-weight:700">250 000</td><td style="color:#DC2626">6 000</td></tr>
+              <tr><td><b>Санкт-Петербург</b></td><td>1 322</td><td>150 000</td><td style="color:#16A34A;font-weight:700">250 000</td><td style="color:#DC2626">9 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+      </div><!-- /grid десятитонник -->
+    </div><!-- /lg-nn -->
+
+    <!-- ── ДАГЕСТАН ── -->
+    <div id="lg-dag" style="display:none">
+
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mid)"><span style="width:10px;height:10px;border-radius:50%;background:#16A34A;display:inline-block"></span>Бесплатная доставка</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mid)"><span style="width:10px;height:10px;border-radius:50%;background:#DC2626;display:inline-block"></span>Ниже порога — доп. оплата</div>
+      </div>
+
+      <!-- График Дагестан -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title"><span class="ico">📅</span> График доставки — Дагестан (недельный)</div>
+        <!-- Legend -->
+        <div style="display:flex;flex-wrap:wrap;gap:6px 16px;margin-bottom:14px;padding:8px 12px;background:var(--bg);border-radius:7px;border:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#E07B2A;display:inline-block;flex-shrink:0"></span>Дербент и юг Дагестана (101)</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#E04040;display:inline-block;flex-shrink:0"></span>Чечня / Ингушетия (102.1 / 102.2)</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#2E86C1;display:inline-block;flex-shrink:0"></span>Ставрополь / КМВ / Нальчик (103 / 104)</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#27AE60;display:inline-block;flex-shrink:0"></span>Астрахань (105)</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mid)"><span style="width:9px;height:9px;border-radius:50%;background:#888;display:inline-block;flex-shrink:0"></span>Местный</div>
+        </div>
+        <!-- Single week column -->
+        <div style="display:grid;grid-template-columns:1fr;gap:0;max-width:480px">
+          <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+            <div style="padding:6px 10px;font-size:11px;font-weight:700;color:var(--mid);border-bottom:1px solid var(--border);background:var(--bg)">Рабочая неделя</div>
+
+            <!-- Пн -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПН</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px">
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FFF3E8;color:#B05A10">Марш. 101</div>
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#FEE8E8;color:#9B2020">102.1 / 102.2</div>
+                </div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.35">Семендер, Избербаш, Дербент / Хасавюрт, Грозный / Назрань, Владикавказ</div>
+              </div>
+            </div>
+
+            <!-- Вт -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ВТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F1F5F9;color:#475569;margin-bottom:2px">Местный</div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.35">Махачкала, Каспийск — ближние отгрузки со склада</div>
+              </div>
+            </div>
+
+            <!-- Ср -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">СР</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px">
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#EBF5FF;color:#1A5CAF">Марш. 103</div>
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#EBF5FF;color:#1A5CAF">Марш. 104</div>
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#E8F8EE;color:#1A7A40">Марш. 105</div>
+                </div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.35">Нефтекумск, Ставрополь / МинВоды, Пятигорск, Нальчик / Кизляр, Астрахань</div>
+              </div>
+            </div>
+
+            <!-- Чт -->
+            <div style="display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ЧТ</div>
+              <div style="flex:1;padding:4px 7px">
+                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px">
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#EBF5FF;color:#1A5CAF">103 / 104 / 105</div>
+                </div>
+                <div style="font-size:10.5px;color:var(--dark);line-height:1.35">Продолжение выгрузок по дальним точкам, обратный путь</div>
+              </div>
+            </div>
+
+            <!-- Пт -->
+            <div style="display:flex;align-items:stretch;min-height:50px">
+              <div style="width:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#999;border-right:1px solid var(--border);writing-mode:vertical-rl;transform:rotate(180deg)">ПТ</div>
+              <div style="flex:1;padding:4px 7px;display:flex;align-items:center">
+                <div>
+                  <div style="display:inline-flex;align-items:center;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:600;background:#F4F4F5;color:#52525B;margin-bottom:2px">Резерв</div>
+                  <div style="font-size:10.5px;color:#AAA;font-style:italic">Допоставки, срочные заказы, внеплановые маршруты</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- /week -->
+      </div>
+
+      <div class="grid2">
+
+        <!-- Маршрут 101 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FFF7ED;color:#C2410C;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 101</span>
+            <span class="obj-q">Дербент</span>
+            <span style="font-size:10px;color:var(--muted)">8 городов · Дагестан</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Семендер</td><td>14</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">1 000</td></tr>
+              <tr><td>Ленинкент</td><td>22</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">1 000</td></tr>
+              <tr><td>Манас</td><td>66</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">1 500</td></tr>
+              <tr><td>Избербаш</td><td>93</td><td>75 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Каякент</td><td>120</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Мамедкала</td><td>156</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Дагестанские огни</td><td>168</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">2 500</td></tr>
+              <tr><td><b>Дербент</b></td><td>180</td><td>75 000</td><td style="color:#16A34A;font-weight:700">120 000</td><td style="color:#DC2626">3 000</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 102.1 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FFF7ED;color:#C2410C;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 102.1</span>
+            <span class="obj-q">Грозный и Чечня</span>
+            <span style="font-size:10px;color:var(--muted)">21 точка</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Шамхал</td><td>19</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">1 000</td></tr>
+              <tr><td>Кизилюрт</td><td>69</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">1 500</td></tr>
+              <tr><td>Хасавюрт</td><td>97</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Гудермес</td><td>145</td><td>75 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Аргун</td><td>169</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td><b>Грозный</b></td><td>186</td><td>75 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">4 000</td></tr>
+              <tr><td colspan="5" style="font-size:11px;color:var(--mid);font-style:italic">Пригороды Грозного (235 км): Шали, Урус-Мартан, Курчалой, Майртуп, Гехи, Алхан-Кала, Самашки, Ачхой-Мартан, Автуры, Бачи-Юрт, Гойты, Катар-Юрт, Аллерой, Старые Атаги — 3 000 руб ниже порога</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 102.2 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FFF7ED;color:#C2410C;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 102.2</span>
+            <span class="obj-q">Ингушетия — Владикавказ</span>
+            <span style="font-size:10px;color:var(--muted)">10 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Карабулак</td><td>234</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Плиево</td><td>241</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Назрань</td><td>251</td><td>75 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td><b>Владикавказ</b></td><td>277</td><td>75 000</td><td style="color:#16A34A;font-weight:700">120 000</td><td style="color:#DC2626">3 500</td></tr>
+              <tr><td>Магас / Сунжа / Экажево / Сурхахи</td><td>288</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 103 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FFF7ED;color:#C2410C;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 103</span>
+            <span class="obj-q">Ставрополь</span>
+            <span style="font-size:10px;color:var(--muted)">8 городов</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Южно-Сухокумск</td><td>277</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Нефтекумск</td><td>339</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Буденновск</td><td>413</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Александровское</td><td>532</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Михайловск</td><td>642</td><td>75 000</td><td style="color:#16A34A;font-weight:700">130 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td><b>Ставрополь</b></td><td>658</td><td>75 000</td><td style="color:#16A34A;font-weight:700">180 000</td><td style="color:#DC2626">6 000</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 104 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FFF7ED;color:#C2410C;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 104</span>
+            <span class="obj-q">Нальчик — КМВ</span>
+            <span style="font-size:10px;color:var(--muted)">22 города</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Моздок</td><td>285</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Прохладный</td><td>341</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td>Георгиевск</td><td>413</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">3 500</td></tr>
+              <tr><td>Минеральные воды</td><td>460</td><td>75 000</td><td style="color:#16A34A;font-weight:700">120 000</td><td style="color:#DC2626">4 500</td></tr>
+              <tr><td>Ессентуки</td><td>525</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">5 000</td></tr>
+              <tr><td>Пятигорск</td><td>544</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">5 000</td></tr>
+              <tr><td><b>Нальчик</b></td><td>544</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">5 000</td></tr>
+              <tr><td colspan="5" style="font-size:11px;color:var(--mid);font-style:italic">Также: Баксан, Чегем, Нарткала, Беслан, Нартан, Эльхотово, Исламей, Горячеводский — 3 500 руб ниже порога</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+        <!-- Маршрут 105 -->
+        <div class="obj-card">
+          <div class="obj-trigger" onclick="objToggle(this)">
+            <span style="background:#FFF7ED;color:#C2410C;font-size:11px;font-weight:800;padding:3px 8px;border-radius:5px">Маршрут 105</span>
+            <span class="obj-q">Астрахань</span>
+            <span style="font-size:10px;color:var(--muted)">4 города</span>
+            <span class="obj-chev">▼</span>
+          </div>
+          <div class="obj-body">
+            <table class="asm-table"><thead><tr><th>Город</th><th>км</th><th>Заказ от</th><th>Бесплатно от</th><th>Ниже порога</th></tr></thead><tbody>
+              <tr><td>Бабаюрт</td><td>99</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Кизляр</td><td>136</td><td>50 000</td><td style="color:#16A34A;font-weight:700">75 000</td><td style="color:#DC2626">2 000</td></tr>
+              <tr><td>Икряное</td><td>448</td><td>50 000</td><td style="color:#16A34A;font-weight:700">100 000</td><td style="color:#DC2626">3 000</td></tr>
+              <tr><td><b>Астрахань</b></td><td>495</td><td>75 000</td><td style="color:#16A34A;font-weight:700">150 000</td><td style="color:#DC2626">4 500</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+
+      </div><!-- /grid2 dag -->
+    </div><!-- /lg-dag -->
+
+  </div><!-- /logistic -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const titles = {scripts:'Скрипты и возражения', assort:'Ассортимент и цены', statuses:'Статусы заказа', logistic:'Логистика'};
+
+function go(id, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  btn.classList.add('on');
+  document.getElementById('topbar-title').textContent = titles[id];
+  closeSidebar();
+  closeAll();
+}
+
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function objToggle(trigger){
+  const body = trigger.nextElementSibling;
+  const was = trigger.classList.contains('open');
+  document.querySelectorAll('.obj-trigger.open').forEach(t=>{
+    t.classList.remove('open'); t.nextElementSibling.classList.remove('show');
+  });
+  if(!was){ trigger.classList.add('open'); body.classList.add('show'); }
+}
+
+function lgSw(id, btn){
+  document.querySelectorAll('.lgtab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('lg-nn').style.display = id==='nn'?'block':'none';
+  document.getElementById('lg-dag').style.display = id==='dag'?'block':'none';
+}
+function closeAll(){
+  document.querySelectorAll('.fc.on,.fec.on').forEach(c=>c.classList.remove('on'));
+}
+function fTog(c){ const w=c.classList.contains('on'); closeAll(); if(!w)c.classList.add('on'); }
+function fTogE(c){ const w=c.classList.contains('on'); closeAll(); if(!w)c.classList.add('on'); }
+function fSw(id, btn){
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('fg').style.display = id==='fg'?'block':'none';
+  document.getElementById('ft').style.display = id==='ft'?'block':'none';
+  closeAll();
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.fc')&&!e.target.closest('.fec')) closeAll();
+});
+</script>
+</body>
+</html>
